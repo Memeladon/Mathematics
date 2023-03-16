@@ -1,6 +1,8 @@
-import csv
+# import csv
 import random
-import seaborn as sns
+
+import pandas as pd
+import matplotlib.pyplot as plt
 
 from prettytable import PrettyTable
 
@@ -26,38 +28,106 @@ def interface():
                     "[1] Метод квадратов\n"
                     "[2] Метод произведений\n"
                     "[3] Мультипликативный конгруэнтный метод\n"
-                    "[4] Все выше перечисленные\n"
                     "[0] Выход\n"))
     if ans == 0:
         exit()
     elif ans == 1:
-        quad_rnd_gen()
+        print("[None - для значения по умолчанию]")
+        n = input("Введите параметр n: ")
+        stp = input("Введите количество итераций: ")
+
+        if n == "None":
+            if stp == "None":
+                quad_rnd_gen(None, 5)
+            else:
+                quad_rnd_gen(None, int(stp))
+        elif stp == "None":
+            quad_rnd_gen(int(n), 5)
+        else:
+            quad_rnd_gen(int(n), int(stp))
+
     elif ans == 2:
-        composition_rnd_gen()
+        print("[None - для значения по умолчанию]")
+        m = input("Введите значение 'ядра': ")
+        n = input("Введите значение 'множимого': ")
+        stp = input("Введите количество итераций: ")
+
+        if m == "None":
+            if n == "None":
+                if stp == "None":
+                    composition_rnd_gen(None, None, 5)
+                else:
+                    composition_rnd_gen(None, None, int(stp))
+            elif stp == "None":
+                composition_rnd_gen(None, int(n), 5)
+            else:
+                composition_rnd_gen(None, int(n), int(stp))
+        elif n == "None":
+            if stp == "None":
+                composition_rnd_gen(int(m), None, 5)
+            else:
+                composition_rnd_gen(int(m), None, int(stp))
+        elif stp == "None":
+            composition_rnd_gen(int(m), int(n), 5)
+        else:
+            composition_rnd_gen(int(m), int(n), int(stp))
+
     elif ans == 3:
-        congruent_rnd_gen()
-    elif ans == 4:
-        quad_rnd_gen()
-        composition_rnd_gen()
-        congruent_rnd_gen()
+        print("[None - для значения по умолчанию]")
+        m = input("Введите значение 'ядра': ")
+        n = input("Введите значение 'делителя': ")
+        stp = input("Введите количество итераций: ")
+
+        if m == "None":
+            if n == "None":
+                if stp == "None":
+                    congruent_rnd_gen(None, None, 5)
+                else:
+                    congruent_rnd_gen(None, None, int(stp))
+            elif stp == "None":
+                congruent_rnd_gen(None, int(n), 5)
+            else:
+                congruent_rnd_gen(None, int(n), int(stp))
+        elif n == "None":
+            if stp == "None":
+                congruent_rnd_gen(int(m), None, 5)
+            else:
+                congruent_rnd_gen(int(m), None, int(stp))
+        elif stp == "None":
+            congruent_rnd_gen(int(m), int(n), 5)
+        else:
+            congruent_rnd_gen(int(m), int(n), int(stp))
+
 
 # Попытка сделать отрисовку графиком
-def plot():
-    list_x = [(x + 1) / 10 for x in range(10)]
+def plot(val=None, name=None):
+    list_x = [x / 10 for x in range(11)]
+    s = pd.Series(val)
 
-    val = sns.load_dataset("values")
-    val.head()
-    # sns.displot(tips, x="size", bins=list_x)
+    # plt.axis([0, 1, 0, len(val)])
+    plt.hist(s, color='blue', edgecolor='black', facecolor='C0', alpha=0.75, bins=list_x)
+    plt.title(name)
+    plt.ylabel('Количество чисел в интервале')
+    plt.xlabel('Интервал')
+    plt.show()
 
-# По фану - самая простая записть в csv
-def scv_write(val):
-    with open('values.csv', 'w', newline='') as csvfile:
-        write = csv.writer(csvfile, delimiter=' ', quotechar='|')
-        write.writerow(val)
+    # ----ЭТО НА СЛУЧАЙ ОТРИСОВКИ НЕСКОЛЬКОХ ГРАФИКОВ---- #
+    # names = ['group_a', 'group_b', 'group_c']
+    # values = [1, 10, 100]
+    #
+    # plt.figure(figsize=(9, 3))
+    #
+    # plt.subplot(131)
+    # plt.bar(names, values)
+    # plt.subplot(132)
+    # plt.scatter(names, values)
+    # plt.subplot(133)
+    # plt.plot(names, values)
+    # plt.suptitle('Categorical Plotting')
+    # plt.show()
 
 
-# %|----------------------% Main functions %----------------------\% #
-# Серединные квадраты
+# Метод квадратов
 def quad_rnd_gen(initN=None, steps=5):
     # Если получили пустое значение
     if initN is None:
@@ -79,9 +149,8 @@ def quad_rnd_gen(initN=None, steps=5):
         val.append(rnd_num)
         initN = int(middle)
 
-    table_draw(td, ["Исх. Число", "Квадрат", "Случайное число"], 3)
-    scv_write(val)
-    plot()
+    # table_draw(td, ["Исх. Число", "Квадрат", "Случайное число"], 3)
+    plot(val, name="Метод квадратов")
 
 
 # Произведения
@@ -110,8 +179,8 @@ def composition_rnd_gen(initM=None, initN=None, steps=5):
         val.append(rnd_num)
         initN = int(current[int(len(current) / 2):].replace(' ', ''))
 
-    table_draw(td, ["Множимое", "Произведение", "Случайное число"], 3)
-    plot(val)
+    # table_draw(td, ["Множимое", "Произведение", "Случайное число"], 3)
+    plot(val, name="Метод произведений")
 
 
 # Мультипликативный конгруэнтный
@@ -143,12 +212,12 @@ def congruent_rnd_gen(initN=None, initD=None, steps=5):
         val.append(rnd_num)
         current = remain
 
-    table_draw(td, ["Исх. число", "Произведение", "Частное, целая часть", "Остаток", "Случайное число"], 5)
-    plot(val)
+    # table_draw(td, ["Исх. число", "Произведение", "Частное, целая часть", "Остаток", "Случайное число"], 5)
+    plot(val, name="Мультипликативный конгруэнтный метод")
 
 
 if __name__ == '__main__':
-    # interface()
-    quad_rnd_gen()  # 7153
+    interface()
+    # quad_rnd_gen()  # 7153
     # composition_rnd_gen()  # 5167, 3729
-    # congruent_rnd_gen(1357, 5689)  # 1357, 5689
+    # congruent_rnd_gen()  # 1357, 5689
